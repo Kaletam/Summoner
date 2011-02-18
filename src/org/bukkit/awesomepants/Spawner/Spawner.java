@@ -28,7 +28,6 @@ import org.bukkit.entity.CreatureType;
 // TODO: Add support for text file and/or SQL DB storage of quotes.
 // TODO: Distinguish between a quote and its author?
 // TODO: Implement console command execution.
-
 /**
  * QuoteGen for Bukkit
  *
@@ -87,6 +86,12 @@ public class Spawner extends JavaPlugin
 	debugees.put(player, value);
     }
 
+    // So...
+    // /spawn subcommand [target=(Player) sender]
+    // So in all cases, we just default the the executing Player (well, presuming the command is from a Player, but I'm slacking and not implementing console commands yet).
+    // But if a target is specified, we check to see if the target is valid.
+    // For now, only accept player names as targets. Eventually add in support for Location-s.
+    // Marginally implemented... this is still a pre-v1.0, after all!
     @Override
     public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args)
     {
@@ -96,125 +101,183 @@ public class Spawner extends JavaPlugin
 	if ((sender instanceof Player)) // If executed by the player.
 	{
 	    Player p = (Player) sender;
-	    Location l = p.getLocation();
-	    World w = p.getWorld();
+	    boolean self = true;
 
-	    w.spawnCreature(l, CreatureType.COW);
+	    SubCommands sub = null;
 
-//	    // This method for getting subcommands stolen from HotSwap.
-//	    SubCommands sub = null;
-//
-//	    try
-//	    {
-//		sub = SubCommands.valueOf(args[0].toUpperCase());
-//	    }
-//	    catch (Exception ex) // Don't actually do anything, just return false (triggering display of usage as per plugin.yml).
-//	    {
-//		return false;
-//	    }
-//
-//	    Random r = new Random();
-//
-//	    int qi = r.nextInt(quotes.length);
-//
-//	    String targetName = "";
-//
-//	    if (args.length > 1)
-//	    {
-//		targetName = args[1];
-//	    }
-//
-//	    String quote = "This space for rent.";
-//
-//	    // This was for testing. Shouldn't need it, but I'm not taking it out right now.
-//	    try
-//	    {
-//		quote = this.quotes[qi];
-//	    }
-//	    catch (Exception ex)
-//	    {
-//		log.log(Level.WARNING, String.format("[%s] threw an exception: %s.", this.getDescription().getName(), ex.getMessage()));
-//	    }
-//
-//	    switch (sub)
-//	    {
-//		case QUOTE:
-//		    p.sendMessage(quote);
-//
-//		    return true;
-//		case SEND:
-//		    // This all *should* mean that a player without permissions, or lacking Permissions, without OP privileges, should not be able to run this subcommand.
-//		    if (this.permissionsEnabled && !this.permissions.Security.permission(p, "qg.send"))
-//		    {
-//			p.sendMessage("You don't have permission to send a quote.");
-//
-//			return true;
-//		    }
-//		    else if (!this.permissionsEnabled)
-//		    {
-//			if (!p.isOp())
-//			{
-//			    p.sendMessage("You don't have permission to send a quote.");
-//
-//			    return true;
-//			}
-//		    }
-//
-//		    if (targetName == null ? "" != null : !targetName.equals(""))
-//		    {
-//			Player target = getServer().getPlayer(targetName);
-//
-//			if (target == null)
-//			{
-//			    p.sendMessage("Could not find a player by the name of " + targetName + ".");
-//			}
-//			else
-//			{
-//			    target.sendMessage(p.getName() + " has sent you a quote.");
-//			    target.sendMessage(quote);
-//			}
-//
-//			return true;
-//		    }
-//		    else
-//		    {
-//			p.sendMessage("Must indicate a player name!");
-//
-//			return true;
-//		    }
-//		case BROADCAST:
-//		    // This all *should* mean that a player without permissions, or lacking Permissions, without OP privileges, should not be able to run this subcommand.
-//		    if (this.permissionsEnabled && !this.permissions.Security.permission(p, "qg.broadcast"))
-//		    {
-//			p.sendMessage("You don't have permission to broadcast a quote.");
-//
-//			return true;
-//		    }
-//		    else if (!this.permissionsEnabled)
-//		    {
-//			if (!p.isOp())
-//			{
-//			    p.sendMessage("You don't have permission to broadcast a quote.");
-//
-//			    return true;
-//			}
-//		    }
-//
-//		    getServer().broadcastMessage(p.getName() + " has sent a broadcast quote.");
-//		    int players = getServer().broadcastMessage(quote);
-//		    p.sendMessage("You have sent a quote to " + players + " players.");
-//
-//		    return true;
-//		default:
-//		    return false;
-//	    }
-//	}
-//	else // TODO: Figure out if !(sender instanceof Player) implies a console executed command.
-//	{
-//	    // Don't do anything right now.
-//	    //log.log(Level.INFO, "We're in onCommand, !(sender instanceof Player).");
-//	    //System.out.println("Console test!");
-//	    return false; // Right now, we don't actually succeed or fail, but for the console, let's output usage for testing purposes.
+	    try
+	    {
+		sub = SubCommands.valueOf(args[0].toUpperCase());
+	    }
+	    catch (Exception ex) // Don't actually do anything, just return false (triggering display of usage as per plugin.yml).
+	    {
+		return false;
+	    }
+
+	    String targetName = "";
+
+	    if (args.length > 1)
+	    {
+		targetName = args[1];
+	    }
+
+	    // If the targetName isn't empty, we're being told to target a Player. So verify that the name is that of an actual Player.
+	    if (!targetName.equals(""))
+	    {
+		self = false;
+
+		if (getServer().getPlayer(targetName) == null)
+		{
+		    p.sendMessage(String.format("%s is not a valid player.", targetName));
+
+		    return true;
+		}
+	    }
+
+	    Player tp;
+	    Location l;
+	    World w;
+
+	    switch (sub)
+	    {
+		case MOO:
+		    // We can simplify this method of permissions checking. Later.
+		    if (this.permissionsEnabled && !this.permissions.Security.permission(p, "spawner.cow"))
+		    {
+			p.sendMessage("You don't have permission to spawn a cow.");
+
+			return true;
+		    }
+		    else if (!this.permissionsEnabled)
+		    {
+			if (!p.isOp())
+			{
+			    p.sendMessage("You don't have permission to spawn a cow.");
+
+			    return true;
+			}
+		    }
+
+		    // If (self), we're targetting the sending Player. If (!self), we're targetting another Player (well, or the sending player explicitly).
+		    tp = (self) ? p : getServer().getPlayer(targetName);
+
+		    l = tp.getLocation();
+		    w = tp.getWorld();
+
+		    w.spawnCreature(l, CreatureType.COW);
+
+		    return true;
+		case OINKBRAINS:
+		    // We can simplify this method of permissions checking. Later.
+		    if (this.permissionsEnabled && !this.permissions.Security.permission(p, "spawner.pigzombie"))
+		    {
+			p.sendMessage("You don't have permission to spawn a pig zombie.");
+
+			return true;
+		    }
+		    else if (!this.permissionsEnabled)
+		    {
+			if (!p.isOp())
+			{
+			    p.sendMessage("You don't have permission to spawn a pig zombie.");
+
+			    return true;
+			}
+		    }
+
+		    // If (self), we're targetting the sending Player. If (!self), we're targetting another Player (well, or the sending player explicitly).
+		    tp = (self) ? p : getServer().getPlayer(targetName);
+
+		    l = tp.getLocation();
+		    w = tp.getWorld();
+
+		    w.spawnCreature(l, CreatureType.PIG_ZOMBIE);
+
+		    return true;
+		case CREEPER:
+		    // We can simplify this method of permissions checking. Later.
+		    if (this.permissionsEnabled && !this.permissions.Security.permission(p, "spawner.creeper"))
+		    {
+			p.sendMessage("You don't have permission to spawn a creeper.");
+
+			return true;
+		    }
+		    else if (!this.permissionsEnabled)
+		    {
+			if (!p.isOp())
+			{
+			    p.sendMessage("You don't have permission to spawn a creeper.");
+
+			    return true;
+			}
+		    }
+
+		    // If (self), we're targetting the sending Player. If (!self), we're targetting another Player (well, or the sending player explicitly).
+		    tp = (self) ? p : getServer().getPlayer(targetName);
+
+		    l = tp.getLocation();
+		    w = tp.getWorld();
+
+		    w.spawnCreature(l, CreatureType.CREEPER);
+
+		    return true;
+		case CREEPERGEDDON:
+		    if (!hasPermission(p, "spawner.creepergeddon"))
+		    {
+			p.sendMessage("You don't have permission to trigger a creeper armageddon.");
+
+			return true;
+		    }
+
+		    // If (self), we're targetting the sending Player. If (!self), we're targetting another Player (well, or the sending player explicitly).
+		    tp = (self) ? p : getServer().getPlayer(targetName);
+
+		    l = tp.getLocation();
+		    w = tp.getWorld();
+
+		    Random r = new Random();
+
+		    for (int i = 0; i <= 6; i++)
+		    {
+			int x = tp.getLocation().getBlockX();
+			int z = tp.getLocation().getBlockZ();
+
+			x = x + (r.nextInt(10) - 5);
+			z = z + (r.nextInt(10) - 5);
+			int y = w.getHighestBlockYAt(x, z);
+
+			Location l2 = new Location(w, x, y, z);
+
+			w.spawnCreature(l2, CreatureType.CREEPER);
+		    }
+
+		    return true;
+		default:
+		    return false;
+	    }
+	}
+	else // TODO: Figure out if !(sender instanceof Player) implies a console executed command.
+	{
+	    // Don't do anything right now.
+	    //log.log(Level.INFO, "We're in onCommand, !(sender instanceof Player).");
+	    //System.out.println("Console test!");
+	    return false; // Right now, we don't actually succeed or fail, but for the console, let's output usage for testing purposes.
+	}
+    }
+
+    // Abstract permissions checking!
+    private boolean hasPermission(Player p, String perm)
+    {
+	if (this.permissionsEnabled && this.permissions.Security.permission(p, perm))
+	{
+	    return true;
+	}
+	else if (!this.permissionsEnabled)
+	{
+	    if (p.isOp())
+	    {
+		return true;
+	    }
 	}
 
 	return false;
@@ -234,8 +297,9 @@ public class Spawner extends JavaPlugin
 	}
     }
 
+    // Not all implemented.
     private enum SubCommands
     {
-	NULL
+	MOO, UNDEADARMY, CREEPERGEDDON, CREEPER, OINKBRAINS, GHAST
     }
 }
