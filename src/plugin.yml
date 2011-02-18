@@ -1,0 +1,14 @@
+name: Spawner
+main: org.bukkit.awesomepants.Spawner.Spawner
+version: 0.1
+website: http://bukkitfun.tumblr.com/
+author: AwesomePants
+description: Spawner plugin.
+commands:
+  spawn:
+    description: Spawns one or more creatures, at a player or location.
+    usage: |
+           Usage -
+           /<command> ???
+           /<command> help - Displays help.
+           /<command> help <subcommand> - Displays detailed help for the subcommand specified.
