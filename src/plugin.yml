@@ -1,15 +1,16 @@
 name: Spawner
-main: org.bukkit.awesomepants.Spawner.Spawner
-version: 0.2
+main: com.chrissquared.awesomepants.Spawner.Spawner
+version: 0.3
 website: http://bukkitfun.tumblr.com/
 author: AwesomePants
 description: Spawner plugin.
 commands:
   spawn:
-    description: Spawns one or more creatures, at a player (or location - not yet implemented).
+    description: >
+                 Spawns one or more creatures, at a player (or location - not yet implemented).
+                 Warning: Target player defaults to the calling player!
     usage: |
            Usage -
-           /<command> moo [targetplayer] - Spawns a cow.
-           /<command> oinkbrains [targetplayer] - Spawns a pig zombie.
-           /<command> creeper [targetplayer] - Spawns a creeper.
+           /<command> [mob] [targetplayer] - Spawns a mob, near the player.
            /<command> creepergeddon [targetplayer] - Spawns a pack of creepers.
+           /<command> undeadarmy [targetplayer] - Spawns a pack of creepers.
