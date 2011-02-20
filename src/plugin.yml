@@ -1,11 +1,11 @@
-name: Spawner
-main: com.chrissquared.awesomepants.Spawner.Spawner
-version: 0.3
+name: Summoner
+main: com.chrissquared.awesomepants.Summoner.Summoner
+version: 0.31
 website: http://bukkitfun.tumblr.com/
 author: AwesomePants
-description: Spawner plugin.
+description: Summoner plugin.
 commands:
-  spawn:
+  summon:
     description: >
                  Spawns one or more creatures, at a player (or location - not yet implemented).
                  Warning: Target player defaults to the calling player!

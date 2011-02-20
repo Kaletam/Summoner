@@ -1,4 +1,4 @@
-package com.chrissquared.awesomepants.Spawner;
+package com.chrissquared.awesomepants.Summoner;
 
 // Java imports
 import java.io.File;
@@ -36,12 +36,12 @@ import org.bukkit.croemmich.serverevents.Messages.Type;
 // TODO: Tutorialize certain parts of this - either move parts to Tutorial, or do extended write ups on some of this.
 // TODO: Actually implement JavaDocs.
 /**
- * Spawner for Bukkit
+ * Summoner for Bukkit
  *
  * @author Kaletam
  *
  */
-public class Spawner extends JavaPlugin
+public class Summoner extends JavaPlugin
 {
     private final HashMap<Player, Boolean> debugees = new HashMap<Player, Boolean>(); // Not a clue what this is generated for. *shrug*
     public static final Logger log = Logger.getLogger("Minecraft"); // Get the Minecraft logger for, er, logging purposes.
@@ -49,7 +49,7 @@ public class Spawner extends JavaPlugin
     private boolean permissionsEnabled = false; // Indicates whether the Permissions plugin is present and enabled.
     private boolean messagesEnabled = false; // Indicates whether the ServerEvents plugin is present and enabled. TODO: Rename.
 
-    public Spawner(PluginLoader pluginLoader, Server instance, PluginDescriptionFile desc, File folder, File plugin, ClassLoader cLoader)
+    public Summoner(PluginLoader pluginLoader, Server instance, PluginDescriptionFile desc, File folder, File plugin, ClassLoader cLoader)
     {
 	super(pluginLoader, instance, desc, folder, plugin, cLoader);
 
@@ -156,9 +156,9 @@ public class Spawner extends JavaPlugin
 		// I'm sure we can combine the animals together, simply using the subcommand to indicate permission, message, and CreatureType. Later.
 		// For that matter, I should be able to consolidate all the single mob spawns.
 		case COW:
-		    if (!hasPermission(p, "spawner.animal.cow"))
+		    if (!hasPermission(p, "summoner.animal.cow"))
 		    {
-			p.sendMessage("You don't have permission to spawn a cow.");
+			p.sendMessage("You don't have permission to summon a cow.");
 
 			return true;
 		    }
@@ -173,9 +173,9 @@ public class Spawner extends JavaPlugin
 
 		    return true;
 		case SHEEP:
-		    if (!hasPermission(p, "spawner.animal.sheep"))
+		    if (!hasPermission(p, "summoner.animal.sheep"))
 		    {
-			p.sendMessage("You don't have permission to spawn a sheep.");
+			p.sendMessage("You don't have permission to summon a sheep.");
 
 			return true;
 		    }
@@ -190,9 +190,9 @@ public class Spawner extends JavaPlugin
 
 		    return true;
 		case CHICKEN:
-		    if (!hasPermission(p, "spawner.animal.chicken"))
+		    if (!hasPermission(p, "summoner.animal.chicken"))
 		    {
-			p.sendMessage("You don't have permission to spawn a chicken.");
+			p.sendMessage("You don't have permission to summon a chicken.");
 
 			return true;
 		    }
@@ -207,9 +207,9 @@ public class Spawner extends JavaPlugin
 
 		    return true;
 		case PIG:
-		    if (!hasPermission(p, "spawner.animal.pig"))
+		    if (!hasPermission(p, "summoner.animal.pig"))
 		    {
-			p.sendMessage("You don't have permission to spawn a pig.");
+			p.sendMessage("You don't have permission to summon a pig.");
 
 			return true;
 		    }
@@ -224,9 +224,9 @@ public class Spawner extends JavaPlugin
 
 		    return true;
 		case SQUID:
-		    if (!hasPermission(p, "spawner.animal.squid"))
+		    if (!hasPermission(p, "summoner.animal.squid"))
 		    {
-			p.sendMessage("You don't have permission to spawn a squid.");
+			p.sendMessage("You don't have permission to summon a squid.");
 
 			return true;
 		    }
@@ -241,9 +241,9 @@ public class Spawner extends JavaPlugin
 
 		    return true;
 		case PIGZOMBIE:
-		    if (!hasPermission(p, "spawner.special.pigzombie"))
+		    if (!hasPermission(p, "summoner.special.pigzombie"))
 		    {
-			p.sendMessage("You don't have permission to spawn a pig zombie.");
+			p.sendMessage("You don't have permission to summon a pig zombie.");
 
 			return true;
 		    }
@@ -257,9 +257,9 @@ public class Spawner extends JavaPlugin
 
 		    return true;
 		case CREEPER:
-		    if (!hasPermission(p, "spawner.monster.creeper"))
+		    if (!hasPermission(p, "summoner.monster.creeper"))
 		    {
-			p.sendMessage("You don't have permission to spawn a creeper.");
+			p.sendMessage("You don't have permission to summon a creeper.");
 
 			return true;
 		    }
@@ -273,9 +273,9 @@ public class Spawner extends JavaPlugin
 
 		    return true;
 		case ZOMBIE:
-		    if (!hasPermission(p, "spawner.monster.zombie"))
+		    if (!hasPermission(p, "summoner.monster.zombie"))
 		    {
-			p.sendMessage("You don't have permission to spawn a zombie.");
+			p.sendMessage("You don't have permission to summon a zombie.");
 
 			return true;
 		    }
@@ -289,9 +289,9 @@ public class Spawner extends JavaPlugin
 
 		    return true;
 		case SKELETON:
-		    if (!hasPermission(p, "spawner.monster.skeleton"))
+		    if (!hasPermission(p, "summoner.monster.skeleton"))
 		    {
-			p.sendMessage("You don't have permission to spawn a skeleton.");
+			p.sendMessage("You don't have permission to summon a skeleton.");
 
 			return true;
 		    }
@@ -305,9 +305,9 @@ public class Spawner extends JavaPlugin
 
 		    return true;
 		case SPIDER:
-		    if (!hasPermission(p, "spawner.monster.spider"))
+		    if (!hasPermission(p, "summoner.monster.spider"))
 		    {
-			p.sendMessage("You don't have permission to spawn a spider.");
+			p.sendMessage("You don't have permission to summon a spider.");
 
 			return true;
 		    }
@@ -322,9 +322,9 @@ public class Spawner extends JavaPlugin
 		    return true;
 		// Ghast spawning doesn't appear to work properly - at least, in my server overworld.
 		case GHAST:
-		    if (!hasPermission(p, "spawner.monster.ghast"))
+		    if (!hasPermission(p, "summoner.monster.ghast"))
 		    {
-			p.sendMessage("You don't have permission to spawn a ghast.");
+			p.sendMessage("You don't have permission to summon a ghast.");
 
 			return true;
 		    }
@@ -338,7 +338,7 @@ public class Spawner extends JavaPlugin
 
 		    return true;
 		case CREEPERGEDDON:
-		    if (!hasPermission(p, "spawner.group.creepergeddon"))
+		    if (!hasPermission(p, "summoner.group.creepergeddon"))
 		    {
 			p.sendMessage("You don't have permission to trigger a creeper armageddon.");
 
@@ -368,9 +368,9 @@ public class Spawner extends JavaPlugin
 
 		    return true;
 		case UNDEADARMY:
-		    if (!hasPermission(p, "spawner.group.undeadarmy"))
+		    if (!hasPermission(p, "summoner.group.undeadarmy"))
 		    {
-			p.sendMessage("You don't have permission to spawn Evil Dead.");
+			p.sendMessage("You don't have permission to summon Evil Dead.");
 
 			return true;
 		    }
